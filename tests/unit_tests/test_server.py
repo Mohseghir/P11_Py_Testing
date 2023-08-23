@@ -51,3 +51,20 @@ def test_unsuccessful_booking_with_insufficient_points(client):
     # Vérifier que le message d'insuffisance de points est présent dans la réponse
     data = response.data.decode()
     assert INSUFFICIENT_POINTS in data
+
+
+# point refresh
+
+def test_club_points_refresh_after_booking(client):
+    booked_places = 2
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": competition_name,
+            "club": club_name,
+            "places": booked_places,
+        },
+    )
+
+    data = response.data.decode()
+    assert data.find(f"Points available: {club_points - booked_places}")
