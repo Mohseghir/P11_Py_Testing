@@ -1,9 +1,9 @@
-from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, clubs, competitions)
+from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_limit_12_PLACES_MESSAGE, clubs, competitions)
 
-club_name = clubs[1]["name"]
-club_email = clubs[1]["email"]
-club_points = int(clubs[1]["points"])
-competition_name = competitions[1]["name"]
+club_name = clubs[0]["name"]
+club_email = clubs[0]["email"]
+club_points = int(clubs[0]["points"])
+competition_name = competitions[0]["name"]
 
 
 # Email tests
@@ -27,7 +27,7 @@ def test_successful_booking_with_enough_points(client):
         data={
             "competition": competition_name,
             "club": club_name,
-            "places": club_points,
+            "places": 1,
         },
     )
 
@@ -42,8 +42,8 @@ def test_unsuccessful_booking_with_insufficient_points(client):
     response = client.post(
         "/purchasePlaces",
         data={
-            "competition": competitions[1]["name"],
-            "club": clubs[1]["name"],
+            "competition": competitions[0]["name"],
+            "club": clubs[0]["name"],
             "places": wrong_amount_of_points,
         },
     )
@@ -68,3 +68,33 @@ def test_club_points_refresh_after_booking(client):
 
     data = response.data.decode()
     assert data.find(f"Points available: {club_points - booked_places}")
+
+
+# 12 places limit
+def test_booking_12_places_or_less(client):
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": competition_name,
+            "club": club_name,
+            "places": 4,
+        },
+    )
+
+    data = response.data.decode()
+    assert SUCCESS_MESSAGE in data
+
+
+def test_booking_limit_12_places(client):
+    booked_places = 13
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": competition_name,
+            "club": club_name,
+            "places": booked_places,
+        },
+    )
+
+    data = response.data.decode()
+    assert BOOKING_limit_12_PLACES_MESSAGE in data
