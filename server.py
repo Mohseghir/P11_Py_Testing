@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 SUCCESS_MESSAGE = "Booking successful"
 INSUFFICIENT_POINTS = "Insufficient points"
 BOOKING_limit_12_PLACES_MESSAGE = "You are not allowed to book more than 12 places!"
+NEGATIF_POINTS = "You are not allowed to intereduce negative figurs "
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -58,20 +59,21 @@ def purchasePlaces():
     club_points = int(club["points"])
     competition_numberOfPlaces = int(competition["numberOfPlaces"])
     placesRequired = int(request.form['places'])
+    error = False
 
     if placesRequired > club_points:
         flash(INSUFFICIENT_POINTS)
-        return render_template("welcome.html", club=club, competitions=competitions)
-    else:
-        if placesRequired > 12:
-            flash(BOOKING_limit_12_PLACES_MESSAGE)
-            return render_template("welcome.html", club=club, competitions=competitions)
+        error = True
 
-        else:
-            club["points"] = club_points - placesRequired
-            competition["numberOfPlaces"] = competition_numberOfPlaces - placesRequired
-            flash(SUCCESS_MESSAGE)
-            return render_template("welcome.html", club=club, competitions=competitions)
+    if placesRequired > 12:
+        flash(BOOKING_limit_12_PLACES_MESSAGE)
+        error = True
+
+    if not error:
+        club["points"] = club_points - placesRequired
+        competition["numberOfPlaces"] = competition_numberOfPlaces - placesRequired
+        flash(SUCCESS_MESSAGE)
+    return render_template("welcome.html", club=club, competitions=competitions)
 
     """if placesRequired > club_points:
         flash(INSUFFICIENT_POINTS)
