@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 
 SUCCESS_MESSAGE = "Booking successful"
 INSUFFICIENT_POINTS = "Insufficient points"
-BOOKING_limit_12_PLACES_MESSAGE = "You are not allowed to book more than 12 places!"
-NEGATIF_POINTS = "You are not allowed to intereduce negative figurs "
+BOOKING_LIMIT_12_PLACES_MESSAGE = "You are not allowed to book more than 12 places!"
+NEGATIVE_POINTS = "You are not allowed to introduce negative points"
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -60,13 +60,17 @@ def purchasePlaces():
     competition_numberOfPlaces = int(competition["numberOfPlaces"])
     placesRequired = int(request.form['places'])
     error = False
+    # points négatifs
+    if placesRequired < 0:
+        flash(NEGATIVE_POINTS)
+        error = True
 
     if placesRequired > club_points:
         flash(INSUFFICIENT_POINTS)
         error = True
 
     if placesRequired > 12:
-        flash(BOOKING_limit_12_PLACES_MESSAGE)
+        flash(BOOKING_LIMIT_12_PLACES_MESSAGE)
         error = True
 
     if not error:
@@ -75,16 +79,6 @@ def purchasePlaces():
         flash(SUCCESS_MESSAGE)
     return render_template("welcome.html", club=club, competitions=competitions)
 
-    """if placesRequired > club_points:
-        flash(INSUFFICIENT_POINTS)
-    elif placesRequired > 12:
-        club["points"] = club_points - placesRequired  # points refresh
-        flash(BOOKING_limit_12_PLACES_MESSAGE)
-    else:
-        competition["numberOfPlaces"] = competition_numberOfPlaces - placesRequired
-        flash(SUCCESS_MESSAGE)
-
-    return render_template("welcome.html", club=club, competitions=competitions)"""
 
 # TODO: Add route for points display
 

@@ -1,4 +1,4 @@
-from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_limit_12_PLACES_MESSAGE, clubs, competitions)
+from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_LIMIT_12_PLACES_MESSAGE, NEGATIVE_POINTS, clubs, competitions)
 
 club_name = clubs[0]["name"]
 club_email = clubs[0]["email"]
@@ -85,7 +85,7 @@ def test_booking_12_places_or_less(client):
     assert SUCCESS_MESSAGE in data
 
 
-def test_booking_limit_12_places(client):
+def test_booking_over_12_places(client):
     booked_places = 13
     response = client.post(
         "/purchasePlaces",
@@ -97,4 +97,20 @@ def test_booking_limit_12_places(client):
     )
 
     data = response.data.decode()
-    assert BOOKING_limit_12_PLACES_MESSAGE in data
+    assert BOOKING_LIMIT_12_PLACES_MESSAGE in data
+
+
+# negative places not allowed
+def test_booking_negative_places(client):
+    booked_places = -2
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": competition_name,
+            "club": club_name,
+            "places": booked_places,
+        },
+    )
+
+    data = response.data.decode()
+    assert NEGATIVE_POINTS in data
