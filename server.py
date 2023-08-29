@@ -5,6 +5,7 @@ SUCCESS_MESSAGE = "Booking successful"
 INSUFFICIENT_POINTS = "Insufficient points"
 BOOKING_LIMIT_12_PLACES_MESSAGE = "You are not allowed to book more than 12 places!"
 NEGATIVE_POINTS = "You are not allowed to introduce negative points"
+BOOKING_MORE_THAN_AVAILABLE = "Sorry, not enough places"
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -59,10 +60,15 @@ def purchasePlaces():
     club_points = int(club["points"])
     competition_numberOfPlaces = int(competition["numberOfPlaces"])
     placesRequired = int(request.form['places'])
+
     error = False
     # points négatifs
     if placesRequired < 0:
         flash(NEGATIVE_POINTS)
+        error = True
+
+    if placesRequired > competition_numberOfPlaces:
+        flash(BOOKING_MORE_THAN_AVAILABLE)
         error = True
 
     if placesRequired > club_points:

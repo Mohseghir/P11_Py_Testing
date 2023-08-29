@@ -1,9 +1,11 @@
-from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_LIMIT_12_PLACES_MESSAGE, NEGATIVE_POINTS, clubs, competitions)
+from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_LIMIT_12_PLACES_MESSAGE,
+                    NEGATIVE_POINTS, BOOKING_MORE_THAN_AVAILABLE, clubs, competitions)
 
 club_name = clubs[0]["name"]
 club_email = clubs[0]["email"]
 club_points = int(clubs[0]["points"])
 competition_name = competitions[0]["name"]
+numberOfPlaces = competitions[0]["numberOfPlaces"]
 
 
 # Email tests
@@ -114,3 +116,22 @@ def test_booking_negative_places(client):
 
     data = response.data.decode()
     assert NEGATIVE_POINTS in data
+
+# BOOKING_MORE_THAN_AVAILABLE
+
+def test_booking_more_than_available(client):
+
+    # Définissez un nombre de places supérieur à la capacité disponible
+    places_to_book = int(numberOfPlaces) + 1
+
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "competition": competition_name,
+            "club": club_name,
+            "places": places_to_book,
+        },
+    )
+
+    data = response.data.decode()
+    assert BOOKING_MORE_THAN_AVAILABLE in data
