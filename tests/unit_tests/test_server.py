@@ -21,6 +21,22 @@ def test_invalid_email(client):
     assert "Invalid email !" in data
 
 
+# Book
+# affiche une page booking.html pour un club ou une compétition valide
+def test_valide_club_and_competition(client):
+    response = client.get(f"/book/{competition_name}/{club_name}")
+    data = response.data.decode()
+    assert "How many places?" in data
+
+
+"""def test_invalide_club_and_competition(client):
+    competition_name = "te"
+    club_name = "te"
+    response = client.get(f"/book/{competition_name}/{club_name}")
+    data = response.data.decode()
+    assert "Something went wrong-please try again" in data"""
+
+
 # Booking tests
 def test_successful_booking_with_enough_points(client):
     # Faire une réservation avec suffisamment de points
@@ -116,6 +132,7 @@ def test_booking_negative_places(client):
 
     data = response.data.decode()
     assert NEGATIVE_POINTS in data
+
 
 # BOOKING_MORE_THAN_AVAILABLE
 
