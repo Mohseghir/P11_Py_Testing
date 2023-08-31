@@ -9,38 +9,38 @@ numberOfPlaces = competitions[0]["numberOfPlaces"]
 
 
 # Email tests
-def test_valid_email(client):
-    response = client.post("/showSummary", data={"email": club_email})
+def test_valid_email(test_client):
+    response = test_client.post("/showSummary", data={"email": club_email})
     data = response.data.decode()
     assert "Welcome" in data
 
 
-def test_invalid_email(client):
-    response = client.post("/showSummary", data={"email": "invalid@email.com"})
+def test_invalid_email(test_client):
+    response = test_client.post("/showSummary", data={"email": "invalid@email.com"})
     data = response.data.decode()
     assert "Invalid email !" in data
 
 
 # Book
 # affiche une page booking.html pour un club ou une compétition valide
-def test_valide_club_and_competition(client):
-    response = client.get(f"/book/{competition_name}/{club_name}")
+def test_valide_club_and_competition(test_client):
+    response = test_client.get(f"/book/{competition_name}/{club_name}")
     data = response.data.decode()
     assert "How many places?" in data
 
 
-"""def test_invalide_club_and_competition(client):
+"""def test_invalide_club_and_competition(test_client):
     competition_name = "te"
     club_name = "te"
-    response = client.get(f"/book/{competition_name}/{club_name}")
+    response = test_client.get(f"/book/{competition_name}/{club_name}")
     data = response.data.decode()
     assert "Something went wrong-please try again" in data"""
 
 
 # Booking tests
-def test_successful_booking_with_enough_points(client):
+def test_successful_booking_with_enough_points(test_client):
     # Faire une réservation avec suffisamment de points
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
@@ -54,10 +54,10 @@ def test_successful_booking_with_enough_points(client):
     assert SUCCESS_MESSAGE in data
 
 
-def test_unsuccessful_booking_with_insufficient_points(client):
+def test_unsuccessful_booking_with_insufficient_points(test_client):
     # Tenter une réservation avec un montant de points insuffisant
     wrong_amount_of_points = club_points + 1
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competitions[0]["name"],
@@ -73,9 +73,9 @@ def test_unsuccessful_booking_with_insufficient_points(client):
 
 # point refresh
 
-def test_club_points_refresh_after_booking(client):
+def test_club_points_refresh_after_booking(test_client):
     booked_places = 2
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
@@ -89,8 +89,8 @@ def test_club_points_refresh_after_booking(client):
 
 
 # 12 places limit
-def test_booking_12_places_or_less(client):
-    response = client.post(
+def test_booking_12_places_or_less(test_client):
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
@@ -103,9 +103,9 @@ def test_booking_12_places_or_less(client):
     assert SUCCESS_MESSAGE in data
 
 
-def test_booking_over_12_places(client):
+def test_booking_over_12_places(test_client):
     booked_places = 13
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
@@ -119,9 +119,9 @@ def test_booking_over_12_places(client):
 
 
 # negative places not allowed
-def test_booking_negative_places(client):
+def test_booking_negative_places(test_client):
     booked_places = -2
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
@@ -136,12 +136,12 @@ def test_booking_negative_places(client):
 
 # BOOKING_MORE_THAN_AVAILABLE
 
-def test_booking_more_than_available(client):
+def test_booking_more_than_available(test_client):
 
     # Définissez un nombre de places supérieur à la capacité disponible
     places_to_book = int(numberOfPlaces) + 1
 
-    response = client.post(
+    response = test_client.post(
         "/purchasePlaces",
         data={
             "competition": competition_name,
