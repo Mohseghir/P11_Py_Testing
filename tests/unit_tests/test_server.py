@@ -29,12 +29,12 @@ def test_valide_club_and_competition(test_client):
     assert "How many places?" in data
 
 
-"""def test_invalide_club_and_competition(test_client):
+def test_invalide_club_and_competition(test_client):
     competition_name = "te"
     club_name = "te"
     response = test_client.get(f"/book/{competition_name}/{club_name}")
     data = response.data.decode()
-    assert "Something went wrong-please try again" in data"""
+    assert "Something went wrong-please try again" in data
 
 
 # Booking tests

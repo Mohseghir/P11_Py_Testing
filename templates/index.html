@@ -13,5 +13,37 @@
         <button type="submit">Enter</button>
     </form>
     {{ error_message }} <!-- Exception pour un email invalide -->
+ <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <h3>General info :</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Club Name</th>
+                <th>Club Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+            <tr>
+                <td>{{ club['name'] }}</td>
+                <td>{{ club['points'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
