@@ -8,6 +8,13 @@ competition_name = competitions[0]["name"]
 numberOfPlaces = competitions[0]["numberOfPlaces"]
 
 
+# Display test
+def test_display_general_info(test_client):
+    response = test_client.get(f"/index")
+    data = response.data.decode()
+    assert "Club Name", "Club Points" in data
+
+
 # Email tests
 def test_valid_email(test_client):
     response = test_client.post("/showSummary", data={"email": club_email})
@@ -137,7 +144,6 @@ def test_booking_negative_places(test_client):
 # BOOKING_MORE_THAN_AVAILABLE
 
 def test_booking_more_than_available(test_client):
-
     # Définissez un nombre de places supérieur à la capacité disponible
     places_to_book = int(numberOfPlaces) + 1
 
