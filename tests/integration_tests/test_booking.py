@@ -40,3 +40,8 @@ def test_integration_flow(test_client):
     data = response.data.decode()
     assert SUCCESS_MESSAGE in data
 
+    # Add a logout step (return to the login page)
+    response = test_client.get("/")
+    data = response.data.decode()
+    assert "Please enter your secretary email to continue" in data
+
