@@ -1,5 +1,6 @@
 from server import (SUCCESS_MESSAGE, INSUFFICIENT_POINTS, BOOKING_LIMIT_12_PLACES_MESSAGE,
                     NEGATIVE_POINTS, BOOKING_MORE_THAN_AVAILABLE, clubs, competitions)
+from datetime import datetime
 
 club_name = clubs[0]["name"]
 club_email = clubs[0]["email"]
@@ -158,3 +159,27 @@ def test_booking_more_than_available(test_client):
 
     data = response.data.decode()
     assert BOOKING_MORE_THAN_AVAILABLE in data
+
+
+def test_book_past_competition(test_client):
+    # Date de la compétition passée (2020)
+    past_competition_date = "2020-03-27 10:00:00"
+
+    # Ajoutez une compétition passée aux données de test
+    competitions.append({
+        "name": "Past Competition",
+        "date": past_competition_date,
+        "numberOfPlaces": "10"
+    })
+
+    competition_name = "Past Competition"
+    club_name = clubs[0]["name"]
+
+    # Convertissez la date de compétition en objet datetime
+    competition_date = datetime.strptime(past_competition_date, "%Y-%m-%d %H:%M:%S")
+
+    # Simulez la réservation pour la compétition passée
+    response = test_client.get(f"/book/{competition_name}/{club_name}")
+
+    # Vérifiez que le message d'erreur est affiché
+    assert "This competition is already past" in response.data.decode()
